@@ -155,6 +155,15 @@ def test_db():
 
     except Exception as e:
         return {"success": False, "error": str(e)}, 500
+    
+@app.route("/env-check", methods=["GET"])
+def env_check():
+    return {
+        "DATABASE_URL": os.environ.get("DATABASE_URL"),
+        "DB_HOST": os.environ.get("DB_HOST"),
+        "DB_USER": os.environ.get("DB_USER"),
+        "DB_NAME": os.environ.get("DB_NAME")
+    }
 
 
 if __name__ == "__main__":
