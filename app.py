@@ -15,13 +15,11 @@ app = Flask(__name__)
 CORS(app)
 
 # --- MySQL Config using DATABASE_URL ---
-DATABASE_URL = os.environ.get("DATABASE_URL")  # Railway sets this automatically
-
 def get_db_connection():
+    db_url = os.environ.get("DATABASE_URL")  # <-- read dynamically
     try:
-        if DATABASE_URL:
-            # Parse DATABASE_URL from Railway
-            parsed = urlparse(DATABASE_URL)
+        if db_url:
+            parsed = urlparse(db_url)
             return mysql.connector.connect(
                 host=parsed.hostname,
                 user=parsed.username,
@@ -30,13 +28,12 @@ def get_db_connection():
                 port=parsed.port or 3306
             )
         else:
-            # Fallback to local .env / defaults
             return mysql.connector.connect(
-                host=os.getenv("DB_HOST", "localhost"),
-                user=os.getenv("DB_USER", "root"),
-                password=os.getenv("DB_PASSWORD", "Pass@1234"),
-                database=os.getenv("DB_NAME", "recipe_db"),
-                port=int(os.getenv("DB_PORT", 3306))
+                host=os.environ.get("DB_HOST", "localhost"),
+                user=os.environ.get("DB_USER", "root"),
+                password=os.environ.get("DB_PASSWORD", "Pass@1234"),
+                database=os.environ.get("DB_NAME", "recipe_db"),
+                port=int(os.environ.get("DB_PORT", 3306))
             )
     except mysql.connector.Error as err:
         print("❌ MySQL connection error:", err)
